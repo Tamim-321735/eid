@@ -22,6 +22,7 @@
       height: 100vh;
       position: relative;
       color: #fff;
+      perspective: 1000px;
     }
     .container {
       position: relative;
@@ -140,6 +141,64 @@
       20% { opacity: 1; }
       100% { transform: translateX(30px) translateY(-120vh); opacity: 0; }
     }
+    /* Interactive Eid Card Styles */
+    .card {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform-style: preserve-3d;
+      transform: translate(-50%, -50%) rotateY(0deg);
+      width: 300px;
+      height: 200px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 15px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      z-index: 30;
+    }
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 15px;
+    }
+    /* Front face */
+    .card-front {
+      font-size: 32px;
+      font-weight: bold;
+      color: #0d1b2a;
+    }
+    /* Back face */
+    .card-back {
+      font-size: 32px;
+      font-weight: bold;
+      color: #ffcc00;
+      text-shadow: 0 0 15px #ffcc00, 0 0 30px #ffcc00;
+      transform: rotateY(180deg);
+    }
+    /* Flip Animation */
+    .card.flip {
+      animation: flipCard 0.6s forwards;
+    }
+    @keyframes flipCard {
+      0% { transform: translate(-50%, -50%) rotateY(0deg); }
+      100% { transform: translate(-50%, -50%) rotateY(180deg); }
+    }
+    /* Slide Down Fade Out */
+    .card.disappear {
+      animation: slideDownFade 1s forwards;
+    }
+    @keyframes slideDownFade {
+      0% { transform: translate(-50%, -50%) rotateY(180deg); opacity: 1; }
+      100% { transform: translate(-50%, 150%) rotateY(180deg); opacity: 0; }
+    }
     /* Media Query for Smaller Screens */
     @media (max-width: 480px) {
       .message {
@@ -164,6 +223,13 @@
         width: 6px;
         height: 16px;
       }
+      .card {
+        width: 250px;
+        height: 170px;
+      }
+      .card-front, .card-back {
+        font-size: 28px;
+      }
     }
   </style>
 </head>
@@ -172,6 +238,12 @@
     <div class="moon"></div>
     <div class="message">Eid Mubarak</div>
     <div class="sub-message">May your life be filled with joy and prosperity.</div>
+  </div>
+
+  <!-- Interactive Eid Card -->
+  <div class="card" id="eidCard">
+    <div class="card-face card-front">Tap to Reveal</div>
+    <div class="card-face card-back">Eid Mubarak</div>
   </div>
 
   <script>
@@ -213,6 +285,24 @@
       });
     }
     setInterval(createLantern, 4000);
+    
+    // Card Animation Logic
+    const card = document.getElementById('eidCard');
+    let flipped = false;
+    
+    card.addEventListener('click', function(e) {
+      // Prevent click from propagating if needed
+      e.stopPropagation();
+      if (!flipped) {
+        flipped = true;
+        // Flip the card
+        card.classList.add('flip');
+        // After the flip animation completes (0.6s) then wait 2 seconds and slide down
+        setTimeout(() => {
+          card.classList.add('disappear');
+        }, 2600); // 600ms + 2000ms = 2600ms
+      }
+    });
   </script>
 </body>
 </html>
